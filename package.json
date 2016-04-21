@@ -1,0 +1,37 @@
+{
+  "name": "umd-require",
+  "version": "0.0.0",
+  "description": "require global modules into a sandboxed context",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tape": "~4.5.1",
+    "tape-catch": "~1.0.4",
+    "testling": "~1.7.1"
+  },
+  "scripts": {
+    "test": "testling -u"
+  },
+  "testling": {
+    "files": "test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:michaelrhodes/umd-require"
+  },
+  "keywords": [
+    "umd",
+    "require",
+    "global",
+    "iframe"
+  ],
+  "author": "Michael Rhodes",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/michaelrhodes/umd-require/issues"
+  },
+  "homepage": "https://github.com/michaelrhodes/umd-require"
+}
