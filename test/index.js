@@ -6,7 +6,7 @@ var recontext = require('../lib/recontext')
 var tick = '✔︎'
 
 test('it returns a funtion', function (assert) {
-  assert.equal('function', typeof umd('test/fixtures/string'), tick)
+  assert.equal('function', typeof umd('test/fixtures/string.js'), tick)
   assert.end()
 })
 
@@ -20,7 +20,7 @@ test('it can load any script', function (assert) {
 })
 
 test('you can access properties', function (assert) {
-  var object = umd('test/fixtures/object', ['hello', 'how'])
+  var object = umd('test/fixtures/object.js', ['hello', 'how'])
   object.hello(function (val) {
     assert.equal('there', val, tick)
 
@@ -32,7 +32,7 @@ test('you can access properties', function (assert) {
 })
 
 test('you can specify a different global name', function (assert) {
-  var math = umd('test/fixtures/mess', 'math')
+  var math = umd('test/fixtures/mess.js', 'math')
   math(function (msg) {
     assert.equal('math is kewl', msg, tick)
     assert.end()
@@ -41,7 +41,7 @@ test('you can specify a different global name', function (assert) {
 
 test('you can specify a different global and access properties',
   function (assert) {
-    var math = umd('test/fixtures/mess', 'math', ['square'])
+    var math = umd('test/fixtures/mess.js', 'math', ['square'])
     math.square(2, function (result) {
       assert.equal(4, result, tick)
       assert.end()
@@ -50,7 +50,7 @@ test('you can specify a different global and access properties',
 
 test('it can’t handle cross-context `instanceof` checks…',
   function (assert) {
-    umd('test/fixtures/array')([], function (yes) {
+    umd('test/fixtures/array.js')([], function (yes) {
       assert.equal(yes, false, tick)
       assert.end()
     })
@@ -58,9 +58,49 @@ test('it can’t handle cross-context `instanceof` checks…',
 
 test('…or can it?', function (assert) {
   umd.re = recontext 
-  umd('test/fixtures/array')([], function (yes) {
+  umd('test/fixtures/array.js')([], function (yes) {
     umd.re = null
     assert.equal(yes, true, tick)
     assert.end()
   })
+})
+
+test('it can call synchronous functions', function (assert) {
+  var greet = umd('test/fixtures/greet.js', true)
+  greet('michael', function (greeting) {
+    assert.equal(greeting, 'hello, michael', tick)
+    assert.end()
+  })
+})
+
+test('it accepts optional arguments in any order', function (assert) {
+  var path = 'test/fixtures/order.js'
+  var name = 'not-order'
+  var properties = ['version', 'fn']
+  var sync = true
+
+  check(name, properties, sync, function () {
+    check(properties, sync, name, function () {
+      check(sync, name, properties, function () {
+        assert.end()
+      })
+    })
+  })
+
+  function check (a, b, c, next) {
+    var order = umd(path, a, b, c)
+
+    order(2, function (squared) {
+      assert.equal(squared, 4, tick)
+
+      order.version(function (version) {
+        assert.equal(version, '1.0.0', tick)
+
+        order.fn(function (msg) {
+          assert.equal(msg, 'thanks for calling', tick)
+          next()
+        }, false)
+      })
+    })
+  }
 })

@@ -2,14 +2,12 @@ var slice = Array.prototype.slice
 
 module.exports = umd
 
-function umd (path, name, props) {
-  // Global name is optional
-  if (name && /Array/.test(name.constructor)) {
-    props = name
-    name = null
-  }
-
-  props = [].concat(props)
+function umd () {
+  var args = slice.call(arguments)
+  var path = args.shift()
+  var name = find(args, 'string')
+  var props = find(args, 'array') || []
+  var sync = find(args, 'boolean')
 
   var loaded = false
   var call = null
@@ -19,13 +17,13 @@ function umd (path, name, props) {
   var entry = accessor()
 
   // Allow access to module.exports[prop]
-  var prop
+  var prop, props = props.slice()
   while (prop = props.shift()) {
     entry[prop] = accessor(prop)
   }
 
   // Load script
-  inject(path, name, function (err, fn) {
+  inject(path, name, sync, function (err, fn) {
     if (err) throw err
 
     call = fn
@@ -48,7 +46,7 @@ function umd (path, name, props) {
   return entry
 }
 
-function inject (path, name,  cb) {
+function inject (path, name, sync, cb) {
   // Assume global name is last URL segment without extension
   name = name || path.split('/').pop().replace(/[#\?\.].+$/, '')
 
@@ -62,28 +60,45 @@ function inject (path, name,  cb) {
 
     var complete = false
     var script = idocument.createElement('script')
-    script.src = path.replace(/\.js$/, '') + '.js'
+    script.src = path
 
     function onload () {
       complete = true
       cb(null, function access (args) {
-        // `browserify -s` camel-cases global names
+        // `browserify -s` camel-cases global names :/
         var object = iwindow[name] || iwindow[camel(name)]
         var prop = object[args.pop()] || object
-        var last = args[args.length - 1]
+        var last = args.pop()
 
-        // The module will be run in a different context
+        // Allow individual calls to made sync or async.
+        if (typeof last == 'boolean') {
+          sync = last
+          last = args[args.length - 1]
+        }
+
+        // The module will be run in a different window context
         // so if it performs any `instanceof` checks against
-        // global constructors, we need to reconstruct its
-        // properties before we proceed. This should never
-        // fail, but it a bit hacky might so it’s optional.
+        // global constructors, we need to reconstruct some
+        // of its properties before we proceed. This sucks.
         if (!!umd.re) {
           var l = args.length
           while (l--) args.push(umd.re(args.shift(), iwindow, true))
         }
 
-        if (typeof prop == 'function') return prop.apply(object, args)
-        if (typeof last == 'function') return last(prop)
+        if (typeof prop == 'function') {
+          // If we are async we don’t need `prop` anymore
+          // so there’s no harm in mutating the value.
+          prop = prop.apply(object, args.concat(last))
+          if (!sync) return
+        }
+
+        // Used for async non-function property access
+        // and also for all sync property access.
+        if (typeof last == 'function') {
+          setTimeout(function () {
+            last(prop)
+          }, 0)
+        }
       })
     }
 
@@ -112,7 +127,22 @@ function inject (path, name,  cb) {
   document.body.appendChild(iframe)
 }
 
-// Logic lifted from: https://github.com/ForbesLindesay/umd
+function find (array, type) {
+  // Including word boundaries will prevent
+  // Array from matching ArrayBuffer, etc.
+  var regex = RegExp('\\b' + type + '\\b', 'i')
+
+  for (var i = 0, l = array.length, val; i < l; i++) {
+    val = array[i]
+    if (typeof val == type || val && regex.test(val.constructor)) {
+      // Remove the found item from the array
+      // to speed up subsequent `find` calls.
+      return array.splice(i, 1)[0]
+    }
+  }
+}
+
+// Logic lifted from https://github.com/ForbesLindesay/umd
 function camel (name) {
   function uc (_, ch) {
     return ch.toUpperCase()
