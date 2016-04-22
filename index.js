@@ -4,13 +4,13 @@ module.exports = iso
 
 function iso () {
   var args = slice.call(arguments)
-  var path = args.shift()
+  var src = args.shift()
   var name = find(args, 'string')
   var props = find(args, 'array') || []
   var sync = find(args, 'boolean')
 
   var loaded = false
-  var call = null
+  var remote = null
   var queue = []
 
   // Allow access to module.exports
@@ -23,15 +23,15 @@ function iso () {
   }
 
   // Load script
-  inject(path, name, sync, function (err, fn) {
+  inject(src, name, sync, function (err, access) {
     if (err) throw err
 
-    call = fn
+    remote = access
     loaded = true
 
     var args
     while (args = queue.shift()) {
-      call(args)
+      remote(args)
     }
   })
 
@@ -39,16 +39,16 @@ function iso () {
     return function () {
       var args = slice.call(arguments)
       args.push(property)
-      loaded ? call(args) : queue.push(args)
+      loaded ? remote(args) : queue.push(args)
     }
   }
 
   return entry
 }
 
-function inject (path, name, sync, cb) {
+function inject (src, name, sync, cb) {
   // Assume global name is last URL segment without extension
-  name = name || path.split('/').pop().replace(/[#\?\.].+$/, '')
+  name = name || src.split('/').pop().replace(/[#\?\.].+$/, '')
 
   var iframe = document.createElement('iframe')
   iframe.setAttribute('data-module', name)
@@ -60,7 +60,7 @@ function inject (path, name, sync, cb) {
 
     var complete = false
     var script = idocument.createElement('script')
-    script.src = path
+    script.src = src
 
     function onload () {
       complete = true
