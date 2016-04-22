@@ -1,3 +1,3 @@
-var umd = require('./index')
-umd.re = require('./lib/recontext')
-module.exports = umd
+var iso = require('./index')
+iso.re = require('./lib/recontext')
+module.exports = iso

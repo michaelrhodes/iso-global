@@ -1,7 +1,7 @@
 {
-  "name": "umd-require",
+  "name": "iso-global",
   "version": "0.0.0",
-  "description": "require global modules into a sandboxed context",
+  "description": "require global objects running in an isolated browser context",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:michaelrhodes/umd-require"
+    "url": "git@github.com:michaelrhodes/iso-global"
   },
   "keywords": [
     "umd",
@@ -31,7 +31,7 @@
   "author": "Michael Rhodes",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/michaelrhodes/umd-require/issues"
+    "url": "https://github.com/michaelrhodes/iso-global/issues"
   },
-  "homepage": "https://github.com/michaelrhodes/umd-require"
+  "homepage": "https://github.com/michaelrhodes/iso-global"
 }

@@ -1,8 +1,8 @@
 var slice = Array.prototype.slice
 
-module.exports = umd
+module.exports = iso
 
-function umd () {
+function iso () {
   var args = slice.call(arguments)
   var path = args.shift()
   var name = find(args, 'string')
@@ -80,9 +80,9 @@ function inject (path, name, sync, cb) {
         // so if it performs any `instanceof` checks against
         // global constructors, we need to reconstruct some
         // of its properties before we proceed. This sucks.
-        if (!!umd.re) {
+        if (!!iso.re) {
           var l = args.length
-          while (l--) args.push(umd.re(args.shift(), iwindow, true))
+          while (l--) args.push(iso.re(args.shift(), iwindow, true))
         }
 
         if (typeof prop == 'function') {
