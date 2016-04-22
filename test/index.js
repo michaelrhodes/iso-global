@@ -1,8 +1,12 @@
 require('./lib/bind.polyfill')
 
 var test = require('tape-catch')
-var iso = require('../index')
-var recontext = require('../lib/recontext')
+var iso = require('../recontext')
+
+// Save recontext stuff for later.
+var recontext = iso.re
+iso.re = null
+
 var tick = '✔︎'
 
 test('it returns a funtion', function (assert) {
