@@ -1,3 +1,3 @@
-function string (str, cb) {
-  cb(typeof str === 'string')
+function string (str) {
+  return typeof str === 'string'
 }

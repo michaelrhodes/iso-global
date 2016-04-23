@@ -7,7 +7,7 @@ function iso () {
   var src = args.shift()
   var name = find(args, 'string')
   var props = find(args, 'array') || []
-  var sync = find(args, 'boolean')
+  var async = find(args, 'boolean')
 
   var loaded = false
   var remote = null
@@ -23,7 +23,7 @@ function iso () {
   }
 
   // Load script
-  inject(src, name, sync, function (err, access) {
+  inject(src, name, async, function (err, access) {
     if (err) throw err
 
     remote = access
@@ -46,8 +46,8 @@ function iso () {
   return entry
 }
 
-function inject (src, name, sync, cb) {
-  // Assume global name is last URL segment without extension
+function inject (src, name, async, cb) {
+  // Assume global name is last URL segment without extension.
   name = name || src.split('/').pop().replace(/[#\?\.].+$/, '')
 
   var iframe = document.createElement('iframe')
@@ -70,9 +70,9 @@ function inject (src, name, sync, cb) {
         var prop = object[args.pop()] || object
         var last = args.pop()
 
-        // Allow individual calls to made sync or async.
+        // Allow individual calls to made a/synchronously.
         if (typeof last == 'boolean') {
-          sync = last
+          async = last
           last = args[args.length - 1]
         }
 
@@ -89,11 +89,11 @@ function inject (src, name, sync, cb) {
           // If we are async we don’t need `prop` anymore
           // so there’s no harm in mutating the value.
           prop = prop.apply(object, args.concat(last))
-          if (!sync) return
+          if (async) return
         }
 
-        // Used for async non-function property access
-        // and also for all sync property access.
+        // Used for synchronous non-function property
+        // access as well as all async property access.
         if (typeof last == 'function') {
           setTimeout(function () {
             last(prop)

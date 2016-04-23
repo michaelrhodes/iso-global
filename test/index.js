@@ -15,10 +15,10 @@ test('it returns a funtion', function (assert) {
 })
 
 test('it can load any script', function (assert) {
-  var lib = 'https://cdn.rawgit.com/michaelrhodes/2e708c23f04a09789cefcf8302753971/raw/f2837993dd5b7e647b7cbaf08bd111a313f6d144/remote.js'
+  var lib = 'https://wzrd.in/standalone/closest-to'
   var remote = iso(lib)
-  remote('michael', function (msg) {
-    assert.equal('greetings from the internet, michael', msg, tick)
+  remote(5, [1, 4, 7], function (closest) {
+    assert.equal(closest, 4, tick)
     assert.end()
   })
 })
@@ -69,7 +69,7 @@ test('…or can it?', function (assert) {
   })
 })
 
-test('it can call synchronous functions', function (assert) {
+test('it can call asynchronous functions', function (assert) {
   var greet = iso('test/fixtures/greet.js', true)
   greet('michael', function (greeting) {
     assert.equal(greeting, 'hello, michael', tick)
@@ -81,11 +81,11 @@ test('it accepts optional arguments in any order', function (assert) {
   var path = 'test/fixtures/order.js'
   var name = 'not-order'
   var properties = ['version', 'fn']
-  var sync = true
+  var async = false
 
-  check(name, properties, sync, function () {
-    check(properties, sync, name, function () {
-      check(sync, name, properties, function () {
+  check(name, properties, async, function () {
+    check(properties, async, name, function () {
+      check(async, name, properties, function () {
         assert.end()
       })
     })
@@ -103,7 +103,7 @@ test('it accepts optional arguments in any order', function (assert) {
         order.fn(function (msg) {
           assert.equal(msg, 'thanks for calling', tick)
           next()
-        }, false)
+        }, true)
       })
     })
   }

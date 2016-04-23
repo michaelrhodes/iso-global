@@ -1,3 +1,5 @@
-function greet (name) {
-  return 'hello, ' + name
+function greet (name, cb) {
+  setTimeout(function () {
+    cb('hello, ' + name)
+  }, 0)
 }

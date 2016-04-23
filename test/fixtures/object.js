@@ -2,8 +2,8 @@
 
 module.exports = {
   hello: 'there',
-  how: function (cb) {
-    cb('are you?')
+  how: function () {
+    return 'are you?'
   }
 }
 

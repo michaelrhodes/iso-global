@@ -1,6 +1,6 @@
-function math (cb) {
-  cb('math is kewl')
+function math () {
+  return 'math is kewl'
 }
-math.square = function (n, cb) {
-  cb(n * n)
+math.square = function (n) {
+  return n * n
 }

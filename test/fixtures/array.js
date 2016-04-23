@@ -1,3 +1,3 @@
-function array (arr, cb) {
-  cb(arr instanceof Array)
+function array (arr) {
+  return arr instanceof Array
 }

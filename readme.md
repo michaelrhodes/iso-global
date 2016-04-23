@@ -22,11 +22,10 @@ var supports = require('subtle-digest/supports')
 
 supports('sha1', function (yes) {
   var sha1 = yes ?
-    iso('url/for/native-sha1.js') :
-    iso('url/for/fallback-sha1.js')
+    iso('url/for/native-sha1.js', true) :
+    iso('url/for/fallback-sha1.js', true)
   
   sha1('some string', function (err, hash) {
-    hash
     > 8b45e4bd1c6acb88bebf6407d16205f567e62a3e
   })
 })
@@ -44,7 +43,7 @@ For more comprehensive but less “real world” usage examples, check out `test
 
 **optional** `object-properties:array` is a list of properties, belonging to the global object, that you would like to access. These will be exposed as properties of the returned `accessor(…)` object, and are themselves `accessor(…)` objects.
 
-**optional** `object-functions-are-synchronous:boolean` defaults to `false` but should be set to `true` if the global object or its function properties return values rather than passing them into callback functions.
+**optional** `object-functions-are-asynchronous:boolean` defaults to `false` but should be set to `true` if the global object or its function properties pass values into callback functions rather than returning them to the caller.
 
 *note: optional arguments for can be specified in any order.*
 
@@ -54,7 +53,7 @@ For more comprehensive but less “real world” usage examples, check out `test
 
 **required** `callback:function` is a function that will eventually be passed the accessed value or values.
 
-**optional** `object-function-is-synchronous:boolean` allows you to override the `object-functions-are-synchronous` boolean for this specific global object property.
+**optional** `object-function-is-asynchronous:boolean` allows you to override the `object-functions-are-asynchronous` boolean for this specific global object property.
 
 ### A few words about `iso-global/recontext(…)`
 
