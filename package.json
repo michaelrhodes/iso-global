@@ -1,7 +1,7 @@
 {
   "name": "iso-global",
   "version": "0.0.0",
-  "description": "require global objects running in an isolated browser context",
+  "description": "access global objects from within an isolated browser context",
   "main": "index.js",
   "directories": {
     "test": "test"
