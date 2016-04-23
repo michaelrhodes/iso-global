@@ -15,10 +15,10 @@ test('it returns a funtion', function (assert) {
 })
 
 test('it can load any script', function (assert) {
-  var lib = 'https://wzrd.in/standalone/closest-to'
+  var lib = 'https://cdn.rawgit.com/michaelrhodes/2e708c23f04a09789cefcf8302753971/raw/9694e8e1571f8ee52093f457c73854369a814f79/remote.js'
   var remote = iso(lib)
-  remote(5, [1, 4, 7], function (closest) {
-    assert.equal(closest, 4, tick)
+  remote('michael', function (message) {
+    assert.equal(message, 'greetings from the internet, michael', tick)
     assert.end()
   })
 })
