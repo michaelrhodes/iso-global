@@ -1,4 +1,4 @@
-require('./lib/bind.polyfill')
+require('bindpolyfill')
 
 var test = require('tape-catch')
 var iso = require('../recontext')

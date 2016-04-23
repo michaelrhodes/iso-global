@@ -8,6 +8,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "bindpolyfill": "0.0.0",
     "tape": "~4.5.1",
     "tape-catch": "~1.0.4",
     "testling": "~1.7.1"
